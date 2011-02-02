@@ -1,3 +1,7 @@
+/*	gaPlugin.js v2.0 <http://web-analytics-or-die.org/2011/02/ga_plugin_j/> 
+	is released under the MIT License <http://www.opensource.org/licenses/mit-license.php> 
+*/
+
 var GaPlugin = function(conf, trackName){
 	this.pageLevel = conf.pageLevel;
 	this.trackName = trackName;
