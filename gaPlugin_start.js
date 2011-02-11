@@ -1,5 +1,3 @@
-
-
 (function(){
 
 /////////////////// TRACKING SETTING /////////////////////////////
@@ -26,9 +24,9 @@
 	//firstTracker.virtualPageviews(gaConf.cg)
 
 	window.onload=function(){
-		//firstTracker.autoLink(gaConf.autoLink);
-		firstTracker.autoLink();
+		firstTracker.autoLink(gaConf.autoLink);
 		firstTracker.timeToComplete(gaConf.timeToComplete);
+		firstTracker.virtualPVPlus(30);
 		//firstTracker.allowLinker(gaConf.allowLinker);
 		//firstTracker.movieTrack(gaConf.movie);
 	};
@@ -67,7 +65,7 @@
 		req.open("GET", path, false);  
 		req.send(null); 
 		var text = req.responseText; 
-		return eval( "(" + text + ")" );
+		return  eval( "(" + text + ")" );
 	}
 	
 })();

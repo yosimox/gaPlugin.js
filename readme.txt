@@ -1,8 +1,3 @@
-/*	gaPlugin.js v2.0 <http://web-analytics-or-die.org/2011/02/ga_plugin_j/> 
-	is released under the MIT License <http://www.opensource.org/licenses/mit-license.php> 
-*/
-
-
 ■特徴
 ・データ取得機能の強化
 Google Analyticsに不足している機能を気軽に補完することができます。
@@ -120,7 +115,7 @@ gaPlugin.jsと動作ファイル(gaPlugin_start.js)を読み込んでくださ�
 ■gaPluginのAPI
 
 API一覧
-.new
+new(コンストラクタ）
 .contentGroup
 .dirGroup
 .getParam
@@ -134,7 +129,7 @@ API一覧
 
 
 --------------------------------
-.new(conf, trackName)
+new(コンストラクタ）  (conf, trackName)
 *機能：
 計測用オブジェクトを作成します。
 
@@ -142,7 +137,7 @@ API一覧
 conf : 全般設定のコンフィグ
 trackName : 任意の文字列
 
-*confCgの形式：
+*confの形式：
  	//全般設定
 	cnf : {
 	//アカウント名 : UA-XXXXXX-Xを入力してください。
@@ -194,6 +189,7 @@ slot : カスタム変数のスロット番号（1-5）
 *機能：
 設定ファイルに指定したパラメータを持っている場合、その値をカスタム変数に保存します。
 カスタム変数を利用します。
+//20110210changed パラメータがなくてもデータを送信していたので、送信しないように修正しました。
 
 *引数：
 slot : カスタム変数のスロット番号（1-5）
@@ -230,6 +226,7 @@ confCv : コンテンツグループのコンフィグ
 		//コンバージョンしたユーザーにつける名前を指定してください。		
 		cvName : "conversed",
 		//コンバージョンとするURLを正規表現で指定してください。
+		//20110210changed. 指定対象にGETパラメータを含めました。ｓ
 		urlString : [/\/test\/ga\/index\.html/, /\/test\/ga\/index2\.html/]
 	},
 
@@ -309,6 +306,8 @@ confLink : オートリンクのコンフィグ
 *機能：
 設定ファイルに記載したスタートページを表示してから、終了ページを表示するまでの時間をカウントします。
 カスタムイベントを利用します。
+//20110210changed クッキーのExpireがおかしかったので修正しました。
+
 
 *引数：
 confTC : timeToCompleteのコンフィグ
@@ -347,10 +346,18 @@ confLinker : allowLinkerのコンフィグ
 
 
 --------------------------------
+//20110210 added
+.virtualPVPlus(seconds)
+*機能：
+引数で指定した秒数後に「パス名+_時間over」というページビューを送信します。
+例：「/index.html_30over」
+基本的には指定した時間以上経過した人を直帰としてみなさないようにするためのものです。
+そのため、セッションの最初のページでのみ、動作するようにしています。
+（30分の有効期限をもったcookieで管理しています。有効期限はページが開かれる度に更新されます）
 
 
-
-
+*引数：
+seconds : バーチャルPVが動作するまでの時間
 
 
 

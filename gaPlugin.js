@@ -60,7 +60,7 @@ GaPlugin.prototype = {
 	    },
 	    setCookie: function(key, value, life) {
 	        var date = new Date();
-	        date.setTime(date.getTime() + (life * 24 * 60 * 60 * 1000));
+	        date.setTime(date.getTime() + life);
 	        document.cookie = key + '=' + escape(value)
 	            + '; expires=' + date.toGMTString() + '; path=/';
 	    }
@@ -100,11 +100,13 @@ GaPlugin.prototype = {
 	//GET Parameter
 	getParam : function(slot, confPar){
 		var val = this.common.getQuery(confPar.paramName);
-		_gaq.push([this.trackName+'._setCustomVar', slot, confPar.category, val, confPar.scope]);
+		if(val){
+			_gaq.push([this.trackName+'._setCustomVar', slot, confPar.category, val, confPar.scope]);
+		}
 	},
 	//Conversion User
 	cv : function(slot, confCv){
-		var loc = location.pathname;
+		var loc = location.pathname + location.search;
 		var arr = confCv.urlString;
 		for(var i=0; i < arr.length; i++){
 			if(loc.match(arr[i])){
@@ -240,11 +242,6 @@ GaPlugin.prototype = {
 			Word: /^(.+\.docx?)$/i
 		}	
 	},
-	
-	
-	
-	
-	
 	//End of AutoLink
 	
 	//Movie Watching Time Measuring
@@ -333,6 +330,20 @@ GaPlugin.prototype = {
 	virtualPageviews : function(confCg){
 		var groupName = "/" + this.getContentGroup(confCg.pages);
 		_gaq.push([this.trackName+'._trackPageview', groupName]);
+		},
+	
+	//Virtural PageViews for the users staying over xx seconds
+	virtualPVPlus : function(seconds){
+			var cookieName = "_gapluginPVP";
+			var path = location.pathname + location.search;
+			var that = this;
+			if(!this.common.getCookie(cookieName)){
+				setTimeout(function(){
+					_gaq.push([that.trackName+'._trackPageview', path + "_" + seconds + "over"]);
+				},
+				seconds * 1000);
+			}
+			this.common.setCookie(cookieName, true, (30 * 1000 * 60));			
 		},
 	
 	//Allow link (by get) to use same _utm cookies for cross domain tracking
