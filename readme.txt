@@ -1,3 +1,11 @@
+2011/02/10 changed
+----
+CV -> 対象範囲をパス名までからGETパラメータ(?以下）までに変更
+timeToComplete -> cookieのExpire指定がおかしかったので修正
+getParam -> パラメータが無いときもデータを送信していたので、送信しないように変更
+メソッド：virtualPVPlusを追加
+----
+
 ■特徴
 ・データ取得機能の強化
 Google Analyticsに不足している機能を気軽に補完することができます。
