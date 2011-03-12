@@ -1,3 +1,18 @@
+2011/03/12 changed
+-------
+gaPlugin_start.jsを修正しました。
+xmlHttpRequestを使って、設定用JSONファイル(gaConf.json)を読み込む方法を止めました。
+普通にHTML上の3つのJSファイルを読み込むという方法にします。
+JSON.parseでは今の設定ファイルを読み込めず、eval()を使わざるを得ない状況だったので、
+それならいっそのこと普通の方法に戻そうということで、HTMLファイルから読み込むようにしました。
+
+利用方法は<head>タグ内で以下の3行を追加してください。
+	<script type="text/javascript" src='/ga/gaPlugin.js'></script>
+	<script type="text/javascript" src='/ga/gaConf.js'></script>
+	<script type="text/javascript" src='/ga/gaPlugin_start.js'></script>
+(src=""は3つのJSファイルを置いたパスを指定してください。)
+
+-------
 2011/02/10 changed
 ----
 CV -> 対象範囲をパス名までからGETパラメータ(?以下）までに変更
@@ -79,9 +94,9 @@ GAレポート画面上でもコンバージョンした追跡することは可
 ■利用方法
 A. 動作ファイル(gaPlugin_start.js)の記述
 1. コンフィグファイルの読み込み
-var gaConf = loadJson("/test/ga/js/gaConf.json");
-コンフィグファイルのパスを指定してください。
-JSONファイルを読み込みます。
+//20110311 changed
+HTML上でコンフィグファイル:gaConf.jsを読み込んでください
+
 
 2.トラックネームの設定
 	var _gaTrackName = "_firstTracker";
@@ -111,12 +126,12 @@ autoLinkなどonloadイベントを設定します。
 方法は1-7と同様です。
 
 
-B.HTMLファイルへの記述
-gaPlugin.jsと動作ファイル(gaPlugin_start.js)を読み込んでください。
-	<script type="text/javascript" src='/js/gaPlugin.js'></script>
-	<script type="text/javascript" src='/js/gaPlugin_start.js'></script>
-
-
+B.HTMLファイルへの記述: 2011/03/12 changed
+gaPlugin.js、コンフィグファイル(gaConf.js)と動作ファイル(gaPlugin_start.js)を読み込んでください。
+	<script type="text/javascript" src='/ga/gaPlugin.js'></script>
+	<script type="text/javascript" src='/ga/gaConf.js'></script>
+	<script type="text/javascript" src='/ga/gaPlugin_start.js'></script>
+(3つのファイルを/ga/上に置いた場合）
 
 -------------------------------------------------------------------
 
