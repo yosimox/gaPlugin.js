@@ -2,9 +2,9 @@
 
 /////////////////// TRACKING SETTING /////////////////////////////
 	//load configure file. Set the pathname for configure files
-	var gaConf = loadJson("/test/ga/js/gaConf.json");
+	var gaConf1 = gaConf.conf1;
 	var _gaTrackName = "_firstTracker";
-	var firstTracker = new GaPlugin(gaConf.cnf, _gaTrackName);
+	var firstTracker = new GaPlugin(gaConf1.cnf, _gaTrackName);
 	
 	//Cross Domain Tracking Setting
 	//_gaq.push([_gaTrackName+'._setDomainName', '.sample.com']);
@@ -12,28 +12,28 @@
 	//_gaq.push([_gaTrackName+'._setAllowHash', false]);
 
 
-	firstTracker.contentGroup(1, gaConf.cg);
+	firstTracker.contentGroup(1, gaConf1.cg);
 	//firstTracker.dirGroup(1);
-	firstTracker.getParam(2, gaConf.getPar);
-	firstTracker.cv(3, gaConf.cv);
+	firstTracker.getParam(2, gaConf1.getPar);
+	firstTracker.cv(3, gaConf1.cv);
 	firstTracker.weekDay(4);
 	firstTracker.dayTime(5);
 	//firstTracker.debug();
 
 	_gaq.push([_gaTrackName+'._trackPageview']);
-	//firstTracker.virtualPageviews(gaConf.cg)
+	//firstTracker.virtualPageviews(gaConf1.cg)
 
 	window.onload=function(){
-		firstTracker.autoLink(gaConf.autoLink);
-		firstTracker.timeToComplete(gaConf.timeToComplete);
+		firstTracker.autoLink(gaConf1.autoLink);
+		firstTracker.timeToComplete(gaConf1.timeToComplete);
 		firstTracker.virtualPVPlus(30);
-		//firstTracker.allowLinker(gaConf.allowLinker);
-		//firstTracker.movieTrack(gaConf.movie);
+		//firstTracker.allowLinker(gaConf1.allowLinker);
+		//firstTracker.movieTrack(gaConf1.movie);
 	};
 	
 /*
 	//Second Tracker for Multipul Account Tracking
-	var gaConf2 = loadJson("/test/ga/js/gaConf2.json");
+	var gaConf2 = gaConf.conf2;
 	var _gaTrackName = "_secondTracker";
 	var secondTracker = new GaPlugin(gaConf2.cnf, _gaTrackName);
 	
@@ -54,19 +54,6 @@
 	
 */	
 	
-	
-	
-/////////////////// END OF TRACKING SETTING //////////////////////
-
-	////////////////DO NOT ALTER BELOW/////////////
-	//function for loading json conf file
-	function loadJson(path){
-		var req = new XMLHttpRequest();
-		req.open("GET", path, false);  
-		req.send(null); 
-		var text = req.responseText; 
-		return  eval( "(" + text + ")" );
-	}
 	
 })();
 
