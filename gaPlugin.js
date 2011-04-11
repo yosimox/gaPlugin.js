@@ -1,4 +1,4 @@
-/*	gaPlugin.js v2.0 <http://web-analytics-or-die.org/2011/02/ga_plugin_j/> 
+/*	gaPlugin.js v2.2 <http://web-analytics-or-die.org/2011/02/ga_plugin_j/> 
 	is released under the MIT License <http://www.opensource.org/licenses/mit-license.php> 
 */
 
@@ -6,20 +6,20 @@ var GaPlugin = function(conf, trackName){
 	this.pageLevel = conf.pageLevel;
 	this.trackName = trackName;
 	_gaq.push([trackName+'._setAccount', conf.account]);
-}
+};
 
 //Prototype Setting
 GaPlugin.prototype = {
 	//Common Utility
 	common : {
-  		//Return GET Parameter
+		//Return GET Parameter
 		getQuery : function(name){
 			if(location.search){
 					var query = location.search;
 					query = query.substring(1,query.length);
 					var qArray = [];
 					qArray = query.split("&");
-					for(var i=0;i<qArray.length;i++){
+					for(var i=0; i<qArray.length; i++){
 						var param = qArray[i].split("=");
 						if(param[0] == name){
 							return param[1];
@@ -86,19 +86,39 @@ GaPlugin.prototype = {
 		return cVal;
 	},
 	//Directroy Group
-	dirGroup : function(slot){
+	dirGroup : function(slot, depth){
+		var dpt = depth || 1;
+		var dirName = this.getDirectroyGroup(dpt);
+		_gaq.push([this.trackName+'._setCustomVar', slot, ("DirectoryGroup_" + dpt), dirName, 3]);
+	},	
+	getDirectroyGroup : function(dpt){	
 		var pathArr = location.pathname.split('/');
+		var lastPathArr = pathArr[pathArr.length - 1];
 		var dirName = "";
 		if(pathArr.length < 3){
 			dirName = "top";
 		}else{
 			dirName = pathArr[1];
+			if(dpt !== 1){
+				for(var i=1; i < dpt; i++){
+						if((pathArr[i+1]) && (pathArr[i+1] !== lastPathArr)){
+							dirName = dirName + "_" + pathArr[i+1];
+						}
+				}
+			}
 		}
-		_gaq.push([this.trackName+'._setCustomVar', slot, "DirectoryGroup", dirName, 3]);
+		return dirName;
 	},
-
 	//GET Parameter
 	getParam : function(slot, confPar){
+		//default settings
+		if(!confPar){
+			var confPar = {
+				category : "Parameter",
+				scope : 2,
+				paramName : "cid"
+			}
+		}
 		var val = this.common.getQuery(confPar.paramName);
 		if(val){
 			_gaq.push([this.trackName+'._setCustomVar', slot, confPar.category, val, confPar.scope]);
@@ -245,16 +265,29 @@ GaPlugin.prototype = {
 	//End of AutoLink
 	
 	//Movie Watching Time Measuring
-	movieTrack : 	function(confMovie){
+	movieTrack :  function(confMovie){
+		var pageUrl = false;
+		var urlName = (location.pathname + location.search).replace("index.html", "");
+		for(var i=0; i < confMovie.pageUrl.length; i++){
+			if(urlName === (confMovie.pageUrl[i]).replace("index.html", "")){
+				pageUrl = urlName;
+			}
+		}
+		if(pageUrl){
+			//alert(pageUrl);
 			var category = confMovie.category;
-			var action = confMovie.action;
+			var action = pageUrl;
 			var maxT = confMovie.maxTime;
 			var t = confMovie.interval;
 			
 			var that = this
 			var elas = 0;
 			var fnc = function(){
-				_gaq.push([that.trackName+'._trackEvent', category, action, ""+elas]);
+				if(elas === 0){
+					_gaq.push([that.trackName+'._trackEvent', category, action, "start"]);
+				}else{
+					_gaq.push([that.trackName+'._trackEvent', category, action, ""+elas]);
+				}
 				elas += t;
 				if(elas > maxT){
 					clearInterval(timer);		
@@ -263,58 +296,92 @@ GaPlugin.prototype = {
 			this.common.delCvar(this.pageLevel, this.trackName);
 			fnc();
 			timer = setInterval(function(){fnc()}, t*1000);
+		
+			}
 		},	
 	
-	//
-	timeToComplete : function(confTC){
+	//Get time to complete from a page to b page
+	// option : get # of clicks from a page to b page
+	timeToComplete : function(confTC, enableClickTrack){
+			var enableClickTrack = enableClickTrack || false;
 			var stArr = confTC.startUrl;
 			var enArr = confTC.endUrl;
 			var cookieName = confTC.cookieName;
+			if(enableClickTrack){
+				var cookieName_click = cookieName + "_c";
+			}
 			var action = confTC.action;
-			
 			var uri = document.URL;
+			
+			//count clicks
+				if(enableClickTrack){
+					var clicks = this.common.getCookie(cookieName + "_c");
+					if(clicks && (clicks !== "false")){
+						clicks = parseInt(this.common.getCookie(cookieName + "_c"));
+						this.common.setCookie(cookieName + "_c", clicks + 1, 1000*60*60*24);
+					}
+				}
 			
 			// Start
 			var stArrLen = stArr.length;
 			for (var i=0; i < stArrLen; i++){
 				if(uri.match(stArr[i])){
-					this.ttcStart(cookieName);
+					this.ttcStart(cookieName, enableClickTrack);
 				}
 			}
 			//End
 			var enArrLen = enArr.length;
 			for (var i=0; i < enArrLen; i++){
 				if(uri.match(enArr[i])){
-					this.ttcEnd(action, cookieName);
+					this.ttcEnd(action, cookieName, enableClickTrack);
 				}
 				else{
 					return false;
 				}
 			}
-							
 		},
-	ttcStart : function(cookieName){
+	ttcStart : function(cookieName, enableClickTrack){
 			if(!this.common.getCookie(cookieName)){
 				var d = new Date().getTime();
 				//valid time = 24 hours
 				this.common.setCookie(cookieName, d, 1000*60*60*24);
+				if(enableClickTrack){
+					this.common.setCookie(cookieName + "_c", 0, 1000*60*60*24);
+				}
 			}else{
 				return false;
 			}
 			
 		},
-	ttcEnd : function(action, cookieName){
-			if(this.common.getCookie(cookieName)){
-				var sTime = parseInt(this.common.getCookie(cookieName));
-				if(sTime!==0){
-					var eTime = new Date().getTime();
-					var ttc = Math.round((parseInt(eTime) -sTime)/1000);
-					
+	ttcEnd : function(action, cookieName, enableClickTrack){
 					var ev_val = {
 						category : "timeToComplete",
 						action 		: action,
 						label : location.pathname
 					}
+			if(this.common.getCookie(cookieName)){
+				
+				//# of clicks to complete
+				if(enableClickTrack){
+					var clicks = this.common.getCookie(cookieName + "_c");
+					if((clicks) && (clicks !== "false")){
+						clicks = parseInt(this.common.getCookie(cookieName + "_c"));
+					}else{
+						return false;
+					}
+					this.common.delCvar(this.pageLevel, this.trackName);
+					_gaq.push([this.trackName+'._trackEvent', ev_val.category, ev_val.action + "_click", ev_val.label + "_click", clicks]);
+					this.common.setCookie(cookieName + "_c", false, 1000*60*60*24);
+				}
+				
+				
+				//time to complete
+				var sTime = parseInt(this.common.getCookie(cookieName));
+				if(sTime!==0){
+					var eTime = new Date().getTime();
+					var ttc = Math.round((parseInt(eTime) -sTime)/1000);
+					
+
 					this.common.delCvar(this.pageLevel, this.trackName);
 					_gaq.push([this.trackName+'._trackEvent', ev_val.category, ev_val.action, ev_val.label, ttc]);
 					this.common.setCookie(cookieName, 0, 1000*60*60*24);
@@ -324,13 +391,20 @@ GaPlugin.prototype = {
 			}else{
 				return false;
 			}
-		},	
-	
+		},		
+		
 	//Virtual PageViews for Content Group
 	virtualPageviews : function(confCg){
 		var groupName = "/" + this.getContentGroup(confCg.pages);
 		_gaq.push([this.trackName+'._trackPageview', groupName]);
 		},
+		
+	//Virtual PageViews for Directroy Group
+	virtualDirGroup : function(depth){
+		var dpt = depth || 1;
+		var dirName = this.getDirectroyGroup(dpt);
+		_gaq.push([this.trackName+'._trackPageview', dirName]);
+	},
 	
 	//Virtural PageViews for the users staying over xx seconds
 	virtualPVPlus : function(seconds){
