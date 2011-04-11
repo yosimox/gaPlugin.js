@@ -26,8 +26,7 @@
 		firstTracker.autoLink(gaConf1.autoLink);
 		firstTracker.timeToComplete(gaConf1.timeToComplete, true);
 		firstTracker.virtualPVPlus(30);
-		firstTracker.movieTrack(gaConf1.movie1);
-		firstTracker.movieTrack(gaConf1.movie2);
+		firstTracker.movieTrack(gaConf1.movie);
 		//firstTracker.allowLinker(gaConf1.allowLinker);
 	};
 	
@@ -44,7 +43,8 @@
 	//secondTracker.debug();
 
 	//_gaq.push([_gaTrackName+'._trackPageview']);
-	secondTracker.virtualPageviews(gaConf2.cg)
+	//secondTracker.virtualPageviews(gaConf2.cg);
+	secondTracker.virtualDirGroup(2);
 
 	window.onload=function(){
 		secondTracker.autoLink(gaConf2.autoLink);
