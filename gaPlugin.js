@@ -357,7 +357,6 @@ GaPlugin.prototype = {
 					var ev_val = {
 						category : "timeToComplete",
 						action 		: action,
-						label : location.pathname
 					}
 			if(this.common.getCookie(cookieName)){
 				
@@ -370,7 +369,7 @@ GaPlugin.prototype = {
 						return false;
 					}
 					this.common.delCvar(this.pageLevel, this.trackName);
-					_gaq.push([this.trackName+'._trackEvent', ev_val.category, ev_val.action + "_click", ev_val.label + "_click", clicks]);
+					_gaq.push([this.trackName+'._trackEvent', ev_val.category, ev_val.action + "_click", clicks]);
 					this.common.setCookie(cookieName + "_c", false, 1000*60*60*24);
 				}
 				
@@ -383,7 +382,7 @@ GaPlugin.prototype = {
 					
 
 					this.common.delCvar(this.pageLevel, this.trackName);
-					_gaq.push([this.trackName+'._trackEvent', ev_val.category, ev_val.action, ev_val.label, ttc]);
+					_gaq.push([this.trackName+'._trackEvent', ev_val.category, ev_val.action, ttc]);
 					this.common.setCookie(cookieName, 0, 1000*60*60*24);
 				}else{
 					return false;
@@ -392,6 +391,7 @@ GaPlugin.prototype = {
 				return false;
 			}
 		},		
+
 		
 	//Virtual PageViews for Content Group
 	virtualPageviews : function(confCg){
