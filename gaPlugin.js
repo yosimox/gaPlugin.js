@@ -318,7 +318,7 @@ GaPlugin.prototype = {
 					var clicks = this.common.getCookie(cookieName + "_c");
 					if(clicks && (clicks !== "false")){
 						clicks = parseInt(this.common.getCookie(cookieName + "_c"));
-						this.common.setCookie(cookieName + "_c", clicks + 1, 1000*60*60*24);
+						this.common.setCookie(cookieName + "_c", clicks + 1, 1000*60*60*0.5);
 					}
 				}
 			
@@ -344,9 +344,9 @@ GaPlugin.prototype = {
 			if(!this.common.getCookie(cookieName)){
 				var d = new Date().getTime();
 				//valid time = 24 hours
-				this.common.setCookie(cookieName, d, 1000*60*60*24);
+				this.common.setCookie(cookieName, d, 1000*60*60*0.5);
 				if(enableClickTrack){
-					this.common.setCookie(cookieName + "_c", 0, 1000*60*60*24);
+					this.common.setCookie(cookieName + "_c", 0, 1000*60*60*0.5);
 				}
 			}else{
 				return false;
@@ -369,8 +369,8 @@ GaPlugin.prototype = {
 						return false;
 					}
 					this.common.delCvar(this.pageLevel, this.trackName);
-					_gaq.push([this.trackName+'._trackEvent', ev_val.category, ev_val.action + "_click", clicks]);
-					this.common.setCookie(cookieName + "_c", false, 1000*60*60*24);
+					_gaq.push([this.trackName+'._trackEvent', ev_val.category, ev_val.action + "_click", ""+clicks]);
+					this.common.setCookie(cookieName + "_c", false, 1000*60*60*0.5);
 				}
 				
 				
@@ -382,8 +382,8 @@ GaPlugin.prototype = {
 					
 
 					this.common.delCvar(this.pageLevel, this.trackName);
-					_gaq.push([this.trackName+'._trackEvent', ev_val.category, ev_val.action, ttc]);
-					this.common.setCookie(cookieName, 0, 1000*60*60*24);
+					_gaq.push([this.trackName+'._trackEvent', ev_val.category, ev_val.action, ""+ttc]);
+					this.common.setCookie(cookieName, 0, 1000*60*60*0.5);
 				}else{
 					return false;
 				}
@@ -391,7 +391,6 @@ GaPlugin.prototype = {
 				return false;
 			}
 		},		
-
 		
 	//Virtual PageViews for Content Group
 	virtualPageviews : function(confCg){
