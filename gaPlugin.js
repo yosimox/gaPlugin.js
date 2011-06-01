@@ -1,4 +1,4 @@
-/*	gaPlugin.js v2.2 <http://web-analytics-or-die.org/2011/02/ga_plugin_j/> 
+/*	gaPlugin.js v2.2 <https://github.com/yosimox/gaPlugin.js> 
 	is released under the MIT License <http://www.opensource.org/licenses/mit-license.php> 
 */
 
