@@ -21,7 +21,7 @@ GaPlugin.prototype = {
 					qArray = query.split("&");
 					for(var i=0; i<qArray.length; i++){
 						var param = qArray[i].split("=");
-						if(param[0] == name){
+						if(param[0] === name){
 							return param[1];
 						}
 					}
@@ -52,7 +52,7 @@ GaPlugin.prototype = {
 	        var cookies = document.cookie.split('; ');
 	        for (var i = 0; i < cookies.length; i++) {
 	            var part = cookies[i].split('=');
-	            if (part[0] == key && part[1] != null) {
+	            if (part[0] === key && part[1] != null) {
 	                return unescape(part[1]);
 	            }
 	        }
@@ -80,7 +80,7 @@ GaPlugin.prototype = {
 				break;
 			}
 		}
-		if(cVal==""){
+		if(cVal===""){
 			cVal = "others";
 		}
 		return cVal;
