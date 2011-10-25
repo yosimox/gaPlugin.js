@@ -1,3 +1,5 @@
+http://web-analytics-or-die.org/gaPlugin/
+
 2011/04/11 changed
 -------
 デフォルトの状態をCoC的な感じで作り直しました。
